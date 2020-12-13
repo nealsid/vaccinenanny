@@ -1,0 +1,21 @@
+{% if second_dose_warning %}
+<h2><font color=red>Patient has had only one dose more than 20 days ago.  Last dose was {{ days_since_last_vaccine }} days ago. </font></h2></br>
+{% endif %}
+
+
+Name: {{ patient.name }}<br>
+MRN: {{ patient.mrn }}<br><br>
+<hr>
+<h2>Doses</h2>
+{% for dose in doses %}
+{{ dose.vaccine.manufacturer_name }} {{ dose.vaccine.vaccine_name }} @ {{ dose.date_given }}
+{% endfor %}
+
+<br>
+
+
+{% if both_doses %}
+  <font color=green>Note: Patient has had both doses</font><br>
+{% endif %}
+<br>
+{{ days_since_last_vaccine }} days since last dose.
