@@ -8,7 +8,7 @@ MRN: {{ patient.mrn }}<br><br>
 <hr>
 <h2>Doses</h2>
 {% for dose in doses %}
-{{ dose.vaccine.manufacturer_name }} {{ dose.vaccine.vaccine_name }} @ {{ dose.date_given }}
+{{ dose.vaccine.manufacturer_name }} {{ dose.vaccine.vaccine_name }} @ {{ dose.date_given }}<br>
 {% endfor %}
 
 <br>

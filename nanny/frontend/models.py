@@ -6,6 +6,9 @@ class Patient(models.Model):
     mrn = models.CharField(max_length=100)
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name + ' (' + self.mrn + ')'
+
 class VaccineManufacturer(models.Model):
     manufacturer_name = models.CharField(max_length=50)
     vaccine_name = models.CharField(max_length=50)
@@ -20,7 +23,13 @@ class VaccineShipment(models.Model):
     received_date = models.DateTimeField('shipment received')
     doses = models.IntegerField()
 
+    def __str__(self):
+        return str(self.vaccine) + '(' + str(self.doses) + ' doses)'
+
 class VaccineDose(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
     vaccine = models.ForeignKey(VaccineManufacturer, on_delete=models.PROTECT, null=True)
     date_given = models.DateTimeField('dose date')
+
+    def __str__(self):
+        return str(self.patient) + ' on ' + str(self.date_given) + ' of ' + str(self.vaccine)

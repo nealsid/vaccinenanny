@@ -10,33 +10,31 @@ def index(request):
 
 def patient(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
-    doses = VaccineDose.objects.filter(patient = patient)
+    doses = VaccineDose.objects.filter(patient = patient).order_by('-date_given')
 
     # see if patient has only received 1 vaccine and we're approaching
     # a few days before they need the second dose
-    if len(doses) == 1:
+    singleDose = len(doses) == 1
+    doubleDose = len(doses) == 2
+
+    if singleDose:
         last_dose_date = doses[0].date_given
         n = timezone.now()
-        days_since_last_vaccine = n - last_dose_date
+        days_since_last_vaccine = (n - last_dose_date).days
+    elif doubleDose:
+        last_dose_date = doses[0].date_given
+        days_since_last_vaccine = (timezone.now() - last_dose_date).days
+        days_between_doses = (doses[0].date_given - doses[1].date_given).days
     else:
-        days_since_last_vaccine = 0
+        days_since_last_vaccine = 'never'
 
-    if days_since_last_vaccine.days > 0:
-        if days_since_last_vaccine.days > 20:
-            second_dose_warning = True
-            both_doses = False
-        else:
-            second_dose_warning = False
-            both_doses = False
-    else:
-        second_dose_warning = False
-        both_doses = True
+    second_dose_warning = (singleDose and days_since_last_vaccine > 20)
 
     return render(request, 'frontend/patient.html', {'patient': patient,
                                                      'doses' : doses,
-                                                     'days_since_last_vaccine': days_since_last_vaccine.days,
+                                                     'days_since_last_vaccine': days_since_last_vaccine,
                                                      'second_dose_warning' : second_dose_warning,
-                                                     'both_doses' : both_doses})
+                                                     'both_doses' : doubleDose})
 
 # def patients_within_missing_dose_threshold(request):
 #     patients_and_dose_count = VaccineDose.objects.values('patient').annotate(Count('patient'))
